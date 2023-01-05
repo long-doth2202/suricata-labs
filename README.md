@@ -1,21 +1,22 @@
-# DÒ QUÉT VÀ TẤN CÔNG MẠNG
+# Thiết lập hệ thống IPS/IDS sử dụng Suricata
 
-## Môn Quản trị mạng - 3//, PGS. TS Tạ Minh Thanh
+## Giới thiệu
 
-## Các thành viên đóng góp
+- Xây dựng hệ thống IPS/IDS bằng Suricata trên Ubuntu
+- Sử dụng python script để tấn công SSH brute-force
+- Sử dụng python script để tấn công SYN-flood
 
-- Đỗ Thành Long
-- Vũ Thái An
+## Cài đặt Suricata và thiết lập rules
 
-## Chức năng
+### Cài đặt Suricata
 
-- Dò quét các cổng được mở trên thiết bị kết nối chung mạng
-- Lợi dụng quá trình bắt tay ba bước để tiến hành SYN flood attack
+- Cài đặt từ apt:
 
-## Suricata rules
+  > sudo apt-get install software-properties-common
+  > sudo add-apt-repository ppa:oisf/suricata-stable
+  > sudo apt-get update
+  > sudo apt-get install suricata
 
-restart -> apply enss33
-
-alert ICMP any any -> $HOME_NET any (msg: "Ping detection"; sid:1000000; rev:1;)
-drop ICMP any any -> $HOME_NET any (msg:"ET DROP ping from any"; sid: 3000005; rev:1;)
-drop tcp any any -> $HOME_NET any (msg:"ET DROP TCP from any"; sid: 3000006; rev:1;)
+- Rules để chặn SYN-flood attack và SSH brute-force:
+  > drop ICMP any any -> $HOME_NET any (msg:"ET DROP ping from any"; sid: 3000005; rev:1;)
+  > drop ssh $EXTERNAL_NET any -> $HOME_NET 22 (msg:"SERIALIZINGME SCAN Paramiko Based SSH Connections Not Allowed"; flow:established,to_server; content:"SSH-"; content:"paramiko"; within:20; reference:url,www.serializing.me/2015/08/12/ssh-brute-force-and-suricata/; classtype:attempted-admin; sid:3000006; rev:1;)

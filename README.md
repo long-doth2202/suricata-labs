@@ -12,11 +12,19 @@
 
 - Cài đặt từ apt:
 
-  > sudo apt-get install software-properties-common
-  > sudo add-apt-repository ppa:oisf/suricata-stable
-  > sudo apt-get update
+  > sudo apt-get install software-properties-common \
+  > sudo add-apt-repository ppa:oisf/suricata-stable \
+  > sudo apt-get update \
   > sudo apt-get install suricata
 
 - Rules để chặn SYN-flood attack và SSH brute-force:
-  > drop ICMP any any -> $HOME_NET any (msg:"ET DROP ping from any"; sid: 3000005; rev:1;)
+  > drop ICMP any any -> $HOME_NET any (msg:"ET DROP ping from any"; sid: 3000005; rev:1;) \
   > drop ssh $EXTERNAL_NET any -> $HOME_NET 22 (msg:"SERIALIZINGME SCAN Paramiko Based SSH Connections Not Allowed"; flow:established,to_server; content:"SSH-"; content:"paramiko"; within:20; reference:url,www.serializing.me/2015/08/12/ssh-brute-force-and-suricata/; classtype:attempted-admin; sid:3000006; rev:1;)
+
+### SSH brute-force attack
+
+> python bruteforce_ssh.py [ip_address] -u [username] -P [dictionary_file]
+
+### SYN-flood attack
+
+> python scanning_networks.py [ip_address]
